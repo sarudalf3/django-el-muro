@@ -1,0 +1,70 @@
+{% extends "sections/base.html" %}
+
+{% block title %} ::Home:: {% endblock %} 
+
+{% block body %}
+
+<!--<div class="container">
+    <h4 class="mt-3">Success. Welcome, {{request.session.user.name}} ({{request.session.user.email}})</h4>
+    <h5 style="color:green"> Succesfully logged on website</h5>
+</div>-->
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-10 offset-2">
+            <h4> Post a message</h4>
+            <form action="/message" method="POST">
+                {% csrf_token %}
+                <div class="col-md-8 form-group">
+                    <textarea type="text" class="form-control" name="msg" rows=3></textarea>
+                </div>
+                <div class="col-5 offset-7 form-group">
+                    <button type="submit" class="btn btn-primary mt-3">Post</button>
+                </div>
+            </form>
+        </div>    
+    </div>
+</div>
+
+<div class="container messages mb-5">
+    <div class="row mt-1">
+        <div class="col-7 offset-2">
+            {% for msg in messages_list %}
+            <div class="user_messages mt-5">
+                <p>
+                    <b>{{ msg.user.first_name }} {{ msg.user.last_name }} posted at {{ msg.updated_at|date:'b d, Y H:i'}}</b>
+                    {% if msg.user.id == request.session.user.id %}
+                    <a href="/destroy/{{msg.id}}">  Delete  </a>
+                    {% endif %}
+                </p>
+                <p>{{msg.message_text}}</p>
+
+                <div class="container">
+                    <div class="row mt-3">
+                        <div class="col-11 offset-1">
+                            <h6>Comments</h6>
+                            {% for comment in msg.comments.all %}
+                            <p><b>{{comment.user.first_name}} {{comment.user.last_name}} comment at {{comment.updated_at|date:'b d, Y H:i'}}</b></p>
+                            <p>{{comment.comment_text}}</p>
+                            {% endfor %}
+
+                            <form action="/comment/{{msg.id}}" method="POST">
+                                {% csrf_token %}
+                                <div class="col-md-8 form-group">
+                                    <textarea type="text" class="form-control" name="comment" rows=3 placeholder="Post a comment..."></textarea>
+                                </div>
+                                <div class="col-6 offset-6 form-group">
+                                    <button type="submit" class="btn btn-primary mt-3">Comment</button>
+                                </div>
+                            </form>
+                        </div>    
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}     
+        </div>
+    </div>
+</div>        
+
+{% endblock %}
